@@ -1,0 +1,23 @@
+{
+  "name": "devtinder1",
+  "version": "1.0.0",
+  "description": "DevTinder Web App",
+  "main": "index.js",
+  "scripts": {
+    "start" :"node src/homework.js",
+    "dev" : "nodemon src/homework.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "NodeJS",
+    "ReactJS",
+    "ExpressJS",
+    "Javascript",
+    "MongoDB"
+  ],
+  "author": "Roshan Gorakhpuriya",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

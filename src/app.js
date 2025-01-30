@@ -34,7 +34,6 @@ app.use("/user" , (req , res)=>{
     res.send("General route");
 })
 
-
 app.get("/user" , (req , res)=>{
     res.send({"firstName" : "Roshan" , "lastName" : "Gorakhpuriya"})
 })
@@ -50,3 +49,5 @@ app.delete("/user" , (req , res)=>{
 app.listen(7777 , ()=>{
     console.log("Launched successfully");
 });
+
+

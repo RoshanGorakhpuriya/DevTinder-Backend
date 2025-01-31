@@ -14,6 +14,8 @@ const app = express();
 //     res.send("General Routing 2");
 // });
 
+
+
 app.get("/admin" , (req , res )=>{
     res.send("Admin Data1");
 })

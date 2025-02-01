@@ -28,10 +28,81 @@ app.post("/signup" , async (req , res)=>{
         res.send("User Added Successfully");
     }
     catch(err){
-        res.status(400).send("Error Occures in DB")
-    }
-    
+        res.status(400).send("Error1 Occures in DB")
+    } 
 })
+
+// get user by id
+app.get("/userId" , async(req , res)=>{                                                    
+    const userId = req.body.id;      
+
+    try{
+        const users = await User.findById(userId);
+
+        res.send(users);
+    }
+    catch(err){
+        res.status(404).send("User not found");
+    }
+})
+
+// get user by Id and delete this
+app.delete("/userId" , async(req , res)=>{
+    const userId = req.body.id;
+    try{
+        const user = await User.findByIdAndDelete(userId);
+        res.send("User deleted Successfully");
+    }
+    catch(err){
+        res.status(404).send("User not found");
+    }
+});
+
+//get user by email
+
+app.get("/user" , async(req , res)=>{
+    const userEmail = req.body.email;
+
+    try{
+        const users = await User.findOne({email : userEmail});
+
+        if(users.length === 0){
+            res.status(404).send("User Not Found");
+        }
+        else{
+            res.send(users);
+        }
+    }
+    catch(err) {
+        res.status(400).send("Something went wrong");
+    }
+})
+
+// get id and updtae the data
+app.patch("/user" , async(req , res)=>{
+    const userId = req.body.id;
+    const data = req.body;
+
+    try{
+        const users = await User.findByIdAndUpdate(userId , data);  
+        res.send("user Updated successfully");
+    }
+    catch(err){
+        res.status(404).send("User not found");
+    }
+})
+
+//get all the user form the database;
+
+app.get("/feed" , async(req , res)=>{
+    try{
+        const users = await User.find({});
+        res.send(users);
+    }
+    catch(err){
+        res.status(400).send("Somethings went wrong");
+    }
+});
 
 connectDB().then(()=>{
     console.log("Database connection established");

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const validator = require("validator");
 const userSchema = new mongoose.Schema({
     firstName :{
         type : String,
@@ -15,11 +15,30 @@ const userSchema = new mongoose.Schema({
         required : true,
         unique : true,
         lowercase : true,
-        trim : true
+        trim : true,
+        validate(value){
+            if(!validator.isEmail(value)){
+                throw new Error("Invalid email address"+value);
+            }
+        }
     },
-    password :{
+    photoUrl :{
         type : String,
-        required : true
+        default : "https://roshanannu.com/images/user-profile.png",
+        validate(value){
+            if(!validator.isURL(value)){
+                throw new error("Invalid url");
+            }
+        }    
+    },
+    password : {
+        type : String,
+        required : true,
+        validate(value){
+            if(!validator.isStrongPassword(value)){
+                throw new error("Enter a Strong Password"+value);
+            }
+        }
     },
     age :{
         type : Number,

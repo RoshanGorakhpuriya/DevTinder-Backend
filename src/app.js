@@ -13,23 +13,65 @@ D/B caret and tilde in express verison
 */
 const express = require("express");
 
-const connectDB = require("./config/database")
+const bcrypt = require("bcrypt");
+
+const connectDB = require("./config/database");
 
 const app = express();
 
 const User = require("./model/user");
 
+const {validateSignUpData} = require("./utils/validation");
+
 app.use(express.json());
 
 app.post("/signup" , async (req , res)=>{
-    const user= new User(req.body);
     try{
+        validateSignUpData(req);
+
+        const {firstName , lastName , email , password} = req.body;
+
+        // Encrypt the password;
+        const passwordHash = await bcrypt.hash(password , 10);
+
+        console.log(passwordHash);
+        const  user= new User({
+            firstName,
+            lastName,
+            email,
+            password:passwordHash,
+        });
         await user.save();
         res.send("User Added Successfully");
     }
+
     catch(err){
-        res.status(400).send("Error1 Occures in DB")
+        res.status(400).send(err.message);
     } 
+})
+
+app.post("/login" , async(req , res)=>{
+    try{
+        const{email , password} = req.body;
+
+        const user = await User.findOne({email : email});
+
+        if(!user){
+            throw new Error("Invalid Credential");
+        }
+
+        const isPasswordValid = await bcrypt.compare(password , user.password);
+
+        if(isPasswordValid){
+            res.send("Login Successfully");
+        }
+        else{
+            throw new Error("Password is not correct");
+        }
+    }
+    catch(err){
+        res.status(400).send(err.message);
+    }
 })
 
 // get user by id
@@ -79,16 +121,30 @@ app.get("/user" , async(req , res)=>{
 })
 
 // get id and updtae the data
-app.patch("/user" , async(req , res)=>{
+app.patch("/user/:userId" , async(req , res)=>{
     const userId = req.body.id;
     const data = req.body;
 
     try{
+        const ALLOWED_UPDATES = [
+            "photoUrl",
+            "about",
+            "gender",
+            "age",
+            "skills"
+        ]
+
+        const isUpdateAllowed = Object.keys(data).every((k)=>
+            ALLOWED_UPDATES.includes(k)
+        );
+        if(!isUpdateAllowed){
+            throw new error("Update not allowed");
+        }
         const users = await User.findByIdAndUpdate(userId , data);  
         res.send("user Updated successfully");
     }
     catch(err){
-        res.status(404).send("User not found");
+        res.status(404).send("Update Failed");
     }
 })
 

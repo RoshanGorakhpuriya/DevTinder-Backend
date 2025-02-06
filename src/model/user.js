@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const userSchema = new mongoose.Schema({
     firstName :{
         type : String,
@@ -54,6 +56,10 @@ const userSchema = new mongoose.Schema({
     about : {
         type : String,
         default : "This is default description of user"
+    },
+    skills : {
+        type : [String],
+        deafult: []
     }
 },{
     timestamps:true
@@ -76,6 +82,8 @@ userSchema.methods.validatePassword = async function(passwordInputByUser) {
         passwordInputByUser,
         passwordHash
     );
+
+    return isPasswordValid;
 }
 
 module.exports = mongoose.model("User" , userSchema);

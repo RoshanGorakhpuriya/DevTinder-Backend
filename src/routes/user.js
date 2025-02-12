@@ -11,14 +11,14 @@ require("../model/connectionRequest")
 
 
 //get all the pending connection request for the logged in user   
-userRouter.get("/user/requests/recieved" , userAuth , async(req , res) =>{
+userRouter.get("/user/requests/received" , userAuth , async(req , res) =>{
     try{
         const loggedInUser = req.user;
 
         const connectionRequests = await ConnectionRequest.find({
             toUserId : loggedInUser._id,
             status : "interested"
-        }).populate("fromUserId" , ["firstName" , "lastName" , "photoUrl" , "skills" , "about"]);
+        }).populate("fromUserId" , ["firstName" , "lastName" , "photoUrl" , "skills" , "about" , "gender" , "age"]);
 
         res.json({
             message : "Data fetched successfully",
@@ -47,8 +47,8 @@ userRouter.get("/user/connections" , userAuth , async(req , res)=>{
                     status : "accepted"
                 }
             ],
-        }).populate("fromUserId" , ["firstName" , "lastName" , "skills" , "about" , "photoUrl"])
-        .populate("toUserId" , ["firstName" , "lastName" , "skills" , "about" , "photoUrl"]);
+        }).populate("fromUserId" , ["firstName" , "lastName" , "skills" , "about" , "photoUrl" , "age" , "gender"])
+        .populate("toUserId" , ["firstName" , "lastName" , "skills" , "about" , "photoUrl" , "age" , "gender"]);
 
         const data = connectionRequests.map((row)=>{
             if(row.fromUserId._id.toString() === loggedInUser._id.toString()){
@@ -91,11 +91,12 @@ userRouter.get("/feed" , userAuth , async(req , res)=>{
                 {_id : {$nin : Array.from(hideUsersFromFeed)}},
                 {_id : {$ne : loggedInUser._id}},
             ],
-        }).select(["firstName" , "lastName" , "skills" , "about" , "photoUrl"])
-        .skip(page)
+        }).select(["firstName" , "lastName" , "skills" , "about" , "photoUrl" , 
+            "age" , "gender"])
+        .skip(skip)
         .limit(limit);
         
-        res.send(users);   
+        res.json({"data" : users});   
     }
     catch(err){
         res.status(400).json({message : err.message});

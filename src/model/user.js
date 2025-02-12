@@ -26,7 +26,8 @@ const userSchema = new mongoose.Schema({
     },
     photoUrl :{
         type : String,
-        default : "https://roshanannu.com/images/user-profile.png",
+        maxLength : 500,
+        default : "https://akshaysaini.in/img/akshay.jpg",
         validate(value){
             if(!validator.isURL(value)){
                 throw new error("Invalid url");
@@ -59,7 +60,7 @@ const userSchema = new mongoose.Schema({
     },
     skills : {
         type : [String],
-        deafult: []
+        default: []
     }
 },{
     timestamps:true

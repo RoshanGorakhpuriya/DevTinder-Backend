@@ -6,6 +6,9 @@ const {userAuth} = require("../middleware/auth.js");
 
 const {validateEditProfileData} = require("../utils/validation.js");
 
+const app = express();
+app.use(express.json());
+
 profileRouter.get("/profile/view", userAuth , async(req , res)=>{
     try{
         const user = req.user;
@@ -29,7 +32,13 @@ profileRouter.patch("/profile/edit" , userAuth , async(req , res)=>{
 
         await loggedInUser.save();
 
-        res.send(`${loggedInUser.firstName} , your profile updated successful`);
+        res.json
+        (
+            {
+                message : `${loggedInUser.firstName} , your profile updated successfully`,
+                data : loggedInUser,
+            }
+        );
     }
     catch(err){
         res.status(400).send("ERROR : : " + err.message);
